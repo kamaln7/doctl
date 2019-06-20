@@ -1,4 +1,5 @@
 project_name: doctl
+
 builds:
 - main: ./cmd/doctl
   env:
@@ -16,6 +17,7 @@ builds:
   ignore:
   - goos: darwin
     goarch: 386
+
 archives:
 - name_template: "doctl-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
   format_overrides:
@@ -23,11 +25,23 @@ archives:
     format: zip
   files: [a-workaround-to-include-only-the-binary*]
   wrap_in_directory: false
+
 checksum:
   name_template: "doctl-{{ .Version }}-checksums.sha256"
+
 dockers:
 - dockerfile: Dockerfile.goreleaser
   image_templates:
   - "kamaln7/doctl:latest"
   - "kamaln7/doctl:{{ .Major }}-latest"
   - "kamaln7/doctl:{{ .Version }}"
+
+release:
+  github:
+    owner: kamaln7
+    name: doctl
+
+changelog:
+  filters:
+    exclude:
+    - "^Merge pull request"
