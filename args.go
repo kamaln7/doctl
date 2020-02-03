@@ -279,4 +279,7 @@ const (
 	ArgObjectName = "name"
 	// ArgObjectNamespace is the Kubernetes object namespace
 	ArgObjectNamespace = "namespace"
+
+	// ArgDest is the path to write stuff in
+	ArgDest = "dest"
 )
