@@ -34,6 +34,8 @@ const (
 	ArgActionStatus = "status"
 	// ArgActionType is an action type argument.
 	ArgActionType = "action-type"
+	// ArgApp is the app ID.
+	ArgApp = "app"
 	// ArgAppSpec is a path to an app spec.
 	ArgAppSpec = "spec"
 	// ArgAppLogType the type of log.

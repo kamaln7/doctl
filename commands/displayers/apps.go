@@ -284,3 +284,85 @@ func (is AppInstanceSizes) JSON(w io.Writer) error {
 	e.SetIndent("", "  ")
 	return e.Encode(is)
 }
+
+type AppProposeResponse struct {
+	Res *godo.AppProposeResponse
+}
+
+var _ Displayable = (*AppProposeResponse)(nil)
+
+func (r AppProposeResponse) Cols() []string {
+	cols := []string{
+		"AppNameAvailable",
+	}
+
+	if r.Res.AppNameSuggestion != "" {
+		cols = append(cols, "AppNameSuggestion")
+	}
+
+	cols = append(cols, []string{
+		"AppIsStatic",
+		"StaticSites",
+		"AppCost",
+		"AppTierUpgradeCost",
+		"AppTierDowngradeCost",
+	}...)
+
+	return cols
+}
+
+func (r AppProposeResponse) ColMap() map[string]string {
+	return map[string]string{
+		"AppNameAvailable":     "App Name Available?",
+		"AppNameSuggestion":    "Suggested App Name",
+		"AppIsStatic":          "Is Static?",
+		"StaticSites":          "Free Static Site Usage",
+		"AppCost":              "$/month",
+		"AppTierUpgradeCost":   "$/month on higher tier",
+		"AppTierDowngradeCost": "$/month on lower tier",
+	}
+}
+
+func (r AppProposeResponse) KV() []map[string]interface{} {
+	nameAvailable := "yes"
+	if !r.Res.AppNameAvailable {
+		nameAvailable = "no"
+	}
+
+	isStatic := "no"
+	if r.Res.AppIsStatic {
+		isStatic = "yes"
+	}
+
+	staticSites := fmt.Sprintf("%s of %s", r.Res.ExistingStaticApps, r.Res.MaxFreeStaticApps)
+	downgradeCost := "n/a"
+	upgradeCost := "n/a"
+
+	if r.Res.AppTierDowngradeCost > 0 {
+		downgradeCost = fmt.Sprintf("%0.2f", r.Res.AppTierDowngradeCost)
+	}
+	if r.Res.AppTierUpgradeCost > 0 {
+		upgradeCost = fmt.Sprintf("%0.2f", r.Res.AppTierUpgradeCost)
+	}
+
+	out := map[string]interface{}{
+		"AppNameAvailable":     nameAvailable,
+		"AppIsStatic":          isStatic,
+		"StaticSites":          staticSites,
+		"AppCost":              r.Res.AppCost,
+		"AppTierUpgradeCost":   upgradeCost,
+		"AppTierDowngradeCost": downgradeCost,
+	}
+
+	if r.Res.AppNameSuggestion != "" {
+		out["AppNameSuggestion"] = r.Res.AppNameSuggestion
+	}
+
+	return []map[string]interface{}{out}
+}
+
+func (r AppProposeResponse) JSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	e.SetIndent("", "  ")
+	return e.Encode(r)
+}
