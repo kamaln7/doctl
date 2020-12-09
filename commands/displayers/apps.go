@@ -364,5 +364,5 @@ func (r AppProposeResponse) KV() []map[string]interface{} {
 func (r AppProposeResponse) JSON(w io.Writer) error {
 	e := json.NewEncoder(w)
 	e.SetIndent("", "  ")
-	return e.Encode(r)
+	return e.Encode(r.Res)
 }
